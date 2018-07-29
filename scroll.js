@@ -63,24 +63,24 @@ var YScroll = (function () {
         me.startY = 0;
         me.endY = 0;
         if (me.downloadOp) {
-            me.option.scrollArea.css('transform', `translateY(${-me.maxScroll}px)`);
+            me.option.scrollArea.css('transform', `translateY(${me.maxScroll}px)`);
         }
+        me.uploadOp = false;
+        me.downloadOp = false;
     };
 
     YScroll.prototype.resetHeight = function (me) {
         me.contentHeight = me.option.scrollArea.height() - $(`.${me.option.upload.class}`).height()
             - $(`.${me.option.download.class}`).height();
-        me.uploadOp = false;
-        me.downloadOp = false;
     };
 
     function touchstart(me, e) {
         var touch = e.targetTouches[0];
         me.startY = touch.pageY;
         me.endY = touch.pageY;
-        me.maxScroll = me.contentHeight - me.clientHeight;
-        me.uploadOp = $('.up-load').height() >= me.option.distance;
-        me.downloadOp = $('.down-load').height() >= me.option.distance;
+        me.maxScroll = -(me.contentHeight - me.clientHeight);
+        me.uploadOp = $(`.${me.option.upload.class}`).height() >= me.option.distance;
+        me.downloadOp = $(`.${me.option.download.class}`).height() >= me.option.distance;
     }
 
     function touchmove(me, e) {
@@ -91,29 +91,31 @@ var YScroll = (function () {
         me.endY = touch.pageY;
 
         // 计算上滑/ 下滑的距离
-        me.offsetY = me.endY - me.startY;
+        me.offsetY = 2 * (me.endY - me.startY);
 
         // 上方边缘
         if (me.scrollTop + me.offsetY >= 0 && !me.uploadOp) {
-            me.offsetY = -me.scrollTop;
-            upload.css('height', (me.scrollTop + me.endY - me.startY) / 2);
-            if (me.endY - me.startY >= 3 * option.distance) {
+            upload.css('height', me.offsetY / 3);
+            if (me.offsetY >= 3 * option.distance) {
                 upload.html(option.upload.update)
             } else {
                 upload.html(option.upload.refresh)
             }
+            option.scrollArea.css('transform', 'translateY(0px)');
+            return;
         }
         // 下方边缘
-        if (me.scrollTop + me.offsetY <= -me.maxScroll && !me.downloadOp) {
+        if (me.scrollTop + me.offsetY <= me.maxScroll && !me.downloadOp) {
             //  高度为滚动超出的高度
-            download.css('height', -(me.scrollTop + me.offsetY + me.maxScroll) / 2);
-            if (me.startY - me.endY >= 3 * option.distance) {
+            var height = -(me.scrollTop + me.offsetY - me.maxScroll);
+            download.css('height', height / 3);
+            if (height >= 3 * option.distance) {
                 download.html(option.download.update)
             } else {
                 download.html(option.download.refresh)
             }
             // 跟随加载的高度 滚动至底部
-            option.scrollArea.css('transform', `translateY(${-me.maxScroll + ((me.scrollTop + me.offsetY + me.maxScroll) / 2)}px)`);
+            option.scrollArea.css('transform', `translateY(${me.maxScroll - height / 3}px)`);
             return;
         }
 
@@ -127,9 +129,9 @@ var YScroll = (function () {
     function touchend(me, e) {
         const option = me.option;
         me.scrollTop = me.offsetY + me.scrollTop;
-
+        // 上边缘
         if (me.scrollTop >= 0) {
-            if (me.endY - me.startY >= 3 * option.distance) {
+            if (me.offsetY >= 3 * option.distance) {
                 me.uploadOp = true;
                 $(`.${option.upload.class}`).html(option.upload.load)
                 me.option.loadUpFn(me);
@@ -141,18 +143,19 @@ var YScroll = (function () {
             option.scrollArea.css('transform', `translateY(${me.scrollTop}px)`);
             return;
         }
-
-        if (me.scrollTop <= -me.maxScroll) {
-            if (me.startY - me.endY >= 3 * option.distance) {
+        // 下边缘
+        if (me.scrollTop <= me.maxScroll) {
+            var height = -(me.scrollTop - me.maxScroll);
+            if (height >= 3 * option.distance) {
                 me.downloadOp = true;
                 $(`.${option.download.class}`).html(option.download.load);
                 option.loadDownFn(me);
                 $(`.${option.download.class}`).css('height', option.distance);
-                option.scrollArea.css('transform', `translateY(${-me.maxScroll - option.distance}px)`);
+                option.scrollArea.css('transform', `translateY(${me.maxScroll - option.distance}px)`);
             } else {
-                option.scrollArea.css('transform', `translateY(${-me.maxScroll}px)`);
+                option.scrollArea.css('transform', `translateY(${me.maxScroll}px)`);
             }
-            me.scrollTop = -me.maxScroll;
+            me.scrollTop = me.maxScroll;
             return;
         }
         me.scrollBack(me);
@@ -165,8 +168,8 @@ var YScroll = (function () {
     }
 
     function moveEnd(me) {
-        $('.up-load').css('transition', 'all 0.5s');
-        $('.down-load').css('transition', 'all 0.5s');
+        $(`.${me.option.upload.class}`).css('transition', 'all 0.5s');
+        $(`.${me.option.download.class}`).css('transition', 'all 0.5s');
         me.option.scrollArea.css('transition', 'all 0.5s');
     }
 
