@@ -95,8 +95,9 @@ var YScroll = (function () {
 
         // 上方边缘
         if (me.scrollTop + me.offsetY >= 0 && !me.uploadOp) {
-            upload.css('height', me.offsetY / 3);
-            if (me.offsetY >= 3 * option.distance) {
+            var height = me.offsetY + me.scrollTop;
+            upload.css('height', height / 3);
+            if (height >= 3 * option.distance) {
                 upload.html(option.upload.update)
             } else {
                 upload.html(option.upload.refresh)
