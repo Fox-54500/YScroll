@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1,user-scalable=no">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/test/scroll.css">
+    <style>
+        .container {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .content > ul > li {
+            height: 50px;
+            line-height: 50px;
+        }
+    </style>
+    <script src="/test/scroll.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="content">
+        <ul>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+            <li>我很好不用担心我</li>
+        </ul>
+    </div>
+
+</div>
+<script>
+    $(function () {
+        document.body.addEventListener('touchstart', function (e) {
+            e.preventDefault();
+        })
+        document.body.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        })
+        new YScroll({
+            scrollArea: $('.content'),
+            distance: 50,
+            loadUpFn: function (me) {
+                setTimeout(function () {
+                    me.scrollBack(me);
+                    me.resetHeight(me);
+                }, 1000)
+            },
+            loadDownFn: function (me) {
+                setTimeout(function () {
+                    me.scrollBack(me);
+                    me.resetHeight(me)
+                }, 1000)
+            }
+        });
+    })
+</script>
+</body>
+</html>
